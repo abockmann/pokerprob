@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+    <title>SVG Image</title>
+</head>
+<link rel="stylesheet" href="css/style.css">
+<body>
+
+
+  <div class="table2">
+    <div class="table_line"></div>
+	<div class="table_pattern"></div>
+    <div class="hole">
+	  <img src="CardFaces/CLUB-4.svg" class="card">
+	  <img src="CardFaces/HEART-11-JACK.svg" class="card">
+	</div>
+  </div>
+  
+  
+  <div class="slider-container">
+    <div class="slider-value" id="sliderValue"></div>
+    <input type="range" min="0" max="100" value="50" class="slider" id="mySlider">
+  </div>
+  
+  <script>
+		var slider = document.getElementById("mySlider");
+		var output = document.getElementById("sliderValue");
+		output.innerHTML = slider.value + "%";
+		
+		slider.oninput = function() {
+			output.innerHTML = this.value + "%";
+		}
+  </script>
+  
+  
+
+
+</body>
+ 
+</html>
