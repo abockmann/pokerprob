@@ -1,3 +1,6 @@
+// hand rank table
+var HR;
+
 // cards
 
   CARDS = {
@@ -160,3 +163,40 @@ hole2.alt = 'Image of card2';
 drawHoleCards()
 var submit_button = document.getElementById("submit_button");
 submit_button.onclick = drawHoleCards;
+
+
+// emscripten
+
+const wasmUrl = 'my_module.wasm';
+
+// Load WebAssembly module
+// const wasmModule = await WebAssembly.instantiateStreaming(fetch(wasmUrl));
+
+// Unpack table.dat
+async function fetchTable() {
+  const tableZipUrl = 'http://localhost:8000/script/HandRanks.zip';
+  const tableArrayBuffer = await fetch(tableZipUrl).then(res => res.arrayBuffer());
+  const jsZip = await JSZip.loadAsync(tableArrayBuffer);
+  const tableData = await jsZip.file('HandRanks.dat').async('arrayBuffer');
+  return tableData
+}
+
+
+fetchTable().then(table => {
+  // Use the table here...
+  HR = table;
+}).catch(error => {
+  console.error(error);
+});
+
+
+
+
+
+
+// Initialize table
+// const { memory, lookup } = wasmModule.instance.exports;
+// const tablePtr = memory.allocate(tableData.byteLength);
+// new Uint8Array(memory.buffer, tablePtr, tableData.byteLength).set(new Uint8Array(tableData));
+// lookup.initTable();
+// memory.grow(1);
