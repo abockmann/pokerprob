@@ -158,23 +158,31 @@ hole1.src = "CardFaces/" + CARD2FILE[hole1_value];
 hole1.alt = 'Image of card1';
 hole2.src = "CardFaces/" + CARD2FILE[hole2_value];
 hole2.alt = 'Image of card2';
+
+
+// Initialize table
+//const wasmUrl = 'my-module.wasm';
+
+// Load WebAssembly module
+//const wasmModule = WebAssembly.instantiateStreaming(fetch(wasmUrl));
+
 }
 
-drawHoleCards()
+// drawHoleCards()
 var submit_button = document.getElementById("submit_button");
 submit_button.onclick = drawHoleCards;
 
 
 // emscripten
 
-const wasmUrl = 'my_module.wasm';
+
 
 // Load WebAssembly module
 // const wasmModule = await WebAssembly.instantiateStreaming(fetch(wasmUrl));
 
 // Unpack table.dat
 async function fetchTable() {
-  const tableZipUrl = 'http://localhost:8000/script/HandRanks.zip';
+  const tableZipUrl = 'script/HandRanks.zip';
   const tableArrayBuffer = await fetch(tableZipUrl).then(res => res.arrayBuffer());
   const jsZip = await JSZip.loadAsync(tableArrayBuffer);
   const tableData = await jsZip.file('HandRanks.dat').async('arrayBuffer');
@@ -194,9 +202,3 @@ fetchTable().then(table => {
 
 
 
-// Initialize table
-// const { memory, lookup } = wasmModule.instance.exports;
-// const tablePtr = memory.allocate(tableData.byteLength);
-// new Uint8Array(memory.buffer, tablePtr, tableData.byteLength).set(new Uint8Array(tableData));
-// lookup.initTable();
-// memory.grow(1);
