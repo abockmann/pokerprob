@@ -1,3 +1,5 @@
+// see https://caniwin.com/texasholdem/preflop/heads-up.php
+
 // hand rank table
 var HR;
 
@@ -225,7 +227,7 @@ function get_preflop_win_probability(own_cards, n_players, trials=1000) {
   var wins = 0;
   var winning_rank = 0;
   for (let i = 0; i <= trials; i++) {
-    cards = choice(5 + 2*n_players, own_cards)
+    cards = choice(5 + 2*(n_players-1), own_cards)
 	table_cards = cards.slice(0, 5)
 	river_index = get_river_index(table_cards);
 	own_rank = get_individual_hand_rank(own_cards, river_index)
