@@ -113,22 +113,23 @@ CARD2FILE = {
  52: 'SPADE-1.svg'
 }
   
-// choice function (for drawing cards without replacement)
-function choice(size, N=52) {
+
+function choice(size, drawn = new Array(), N=52) {
+  // choice function (for drawing N cards without replacement.  If some cards are already drawn, they can be included as an array in the drawn argument)
   if (size > N) {
     throw new Error('size cannot be greater than length of array');
   }
 
-  const indices = new Set();
-
-  while (indices.size < size) {
+  //if const indices = new Set();
+  var indices = new Set(Array.from(drawn).map(i => i - 1));
+  while (indices.size < size + drawn.length) {
     const index = Math.floor(Math.random() * N);
     if (!indices.has(index)) {
       indices.add(index);
     }
   }
-
-  return Array.from(indices).map(i => i + 1);
+  const drawn_cards = Array.from(indices).map(i => i + 1);
+  return drawn_cards.slice(drawn.length, drawn_cards.length)
 }
   
 
@@ -173,13 +174,6 @@ var submit_button = document.getElementById("submit_button");
 submit_button.onclick = drawHoleCards;
 
 
-// emscripten
-
-
-
-// Load WebAssembly module
-// const wasmModule = await WebAssembly.instantiateStreaming(fetch(wasmUrl));
-
 // Unpack table.dat
 async function fetchTable() {
   const tableZipUrl = 'script/HandRanks.zip';
@@ -197,9 +191,39 @@ fetchTable().then(table => {
   console.error(error);
 });
 
-function rank_hand(c) {
+function get_hand_value(c) {
   return HR[HR[HR[HR[HR[HR[HR[53+c[0]]+c[1]]+c[2]]+c[3]]+c[4]]+c[5]]+c[6]]	
 }
+
+function get_flop_index(c) {
+    // intermediate value after the flop.
+    return HR[HR[HR[53+c[0]]+c[1]]+c[2]]
+}
+
+function get_turn_index(c) {
+    // intermediate value after the turn.
+    // returns the index after the community cards
+    return HR[HR[HR[HR[53+c[0]]+c[1]]+c[2]]+c[3]]
+}
+
+function get_river_index(c) {
+    // intermediate value after the river.
+    // returns the index after the community cards
+    return HR[HR[HR[HR[HR[53+c[0]]+c[1]]+c[2]]+c[3]]+c[4]]
+}
+
+function get_individual_hand_rank(h, community_index) {
+    // hand value after the community cards + 2 hole cards
+    return HR[HR[community_index+h[0]]+h[1]]
+}
+
+
+function draw_and_rank_hand() {
+	cards = choice(7);
+	return rank_hand(cards)
+}
+
+
 
 function test_speed(iters) {
 	console.log('start')
@@ -209,6 +233,8 @@ function test_speed(iters) {
     }
 	console.log('stop')
 }
+
+
 
 
 
