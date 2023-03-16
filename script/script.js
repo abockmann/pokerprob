@@ -186,7 +186,7 @@ async function fetchTable() {
   const tableArrayBuffer = await fetch(tableZipUrl).then(res => res.arrayBuffer());
   const jsZip = await JSZip.loadAsync(tableArrayBuffer);
   const tableData = await jsZip.file('HandRanks.dat').async('arrayBuffer');
-  return tableData
+  return new Uint32Array(tableData)
 }
 
 
@@ -197,6 +197,18 @@ fetchTable().then(table => {
   console.error(error);
 });
 
+function rank_hand(c) {
+  return HR[HR[HR[HR[HR[HR[HR[53+c[0]]+c[1]]+c[2]]+c[3]]+c[4]]+c[5]]+c[6]]	
+}
+
+function test_speed(iters) {
+	console.log('start')
+	for (let i = 0; i <= iters; i++) {
+	  cards = choice(7, N=52)
+	  rank_hand(cards)
+    }
+	console.log('stop')
+}
 
 
 

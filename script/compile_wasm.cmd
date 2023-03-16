@@ -1,1 +1,0 @@
-emcc my_module.cpp -O3 -s EXPORTED_FUNCTIONS="['_lookup', '_initTable']" -s EXTRA_EXPORTED_RUNTIME_METHODS="['allocate']" -s --no-entry WASM=1 -s INITIAL_MEMORY=200mb -o my_module.wasm
