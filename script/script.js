@@ -119,8 +119,6 @@ function choice(size, drawn = new Array(), N=52) {
   if (size > N) {
     throw new Error('size cannot be greater than length of array');
   }
-
-  //if const indices = new Set();
   var indices = new Set(Array.from(drawn).map(i => i - 1));
   while (indices.size < size + drawn.length) {
     const index = Math.floor(Math.random() * N);
@@ -212,9 +210,9 @@ function get_river_index(c) {
     return HR[HR[HR[HR[HR[53+c[0]]+c[1]]+c[2]]+c[3]]+c[4]]
 }
 
-function get_individual_hand_rank(h, community_index) {
+function get_individual_hand_rank(h, river_index) {
     // hand value after the community cards + 2 hole cards
-    return HR[HR[community_index+h[0]]+h[1]]
+    return HR[HR[river_index+h[0]]+h[1]]
 }
 
 
@@ -223,19 +221,31 @@ function draw_and_rank_hand() {
 	return rank_hand(cards)
 }
 
-
-
-function test_speed(iters) {
-	console.log('start')
-	for (let i = 0; i <= iters; i++) {
-	  cards = choice(7, N=52)
-	  rank_hand(cards)
-    }
-	console.log('stop')
+function get_preflop_win_probability(own_cards, n_players, trials=1000) {
+  var wins = 0;
+  var winning_rank = 0;
+  for (let i = 0; i <= trials; i++) {
+    cards = choice(5 + 2*n_players, own_cards)
+	table_cards = cards.slice(0, 5)
+	river_index = get_river_index(table_cards);
+	own_rank = get_individual_hand_rank(own_cards, river_index)
+	win = 1
+	for (let j = 0; j <= n_players; j++) {
+	  player_cards = cards.slice(5+2*j, 5+2*j+2)
+	  player_rank = get_individual_hand_rank(player_cards, river_index)
+	  if (player_rank >= own_rank) {
+	    win = 0
+		break;
+	  }
+	}
+	wins += win
+  }
+  return  wins/trials // winning percentage
 }
 
-
-
+function get_hand_type(rank) {
+	return ['error', 'high card', 'one pair', 'two pair', 'trips', 'straight', 'flush', 'full house', 'quads', 'straight flush'][rank >> 12]
+}
 
 
 
