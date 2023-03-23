@@ -1,5 +1,0 @@
-emcc my_module.cpp -O3 -s WASM=1 -s emcc my_module.cpp -O3 -s EXPORTED_FUNCTIONS="['_initTable', '_lookup']" --no-entry WASM=1 -o my_module.wasm -s EXTRA_EXPORTED_RUNTIME_METHODS="['allocate', 'grow']" -fno-entry --initial-memory=3200 -o my_module.wasm
-
-
-# all exported functions must be wrapped in extern "C" {}
-emcc my_module.cpp -O3 -s EXPORTED_FUNCTIONS="['_lookup', '_initTable']" -s EXTRA_EXPORTED_RUNTIME_METHODS="['allocate']" -s --no-entry WASM=1 -s INITIAL_MEMORY=200mb -o my_module.wasm

@@ -5,7 +5,7 @@ var HR;
 
 // cards
 
-  CARDS = {
+const CARDS = {
     "2c": 1,
     "2d": 2,
     "2h": 3,
@@ -60,61 +60,78 @@ var HR;
     "as": 52
   }
   
-CARD2FILE = {
- 1: 'CLUB-2.svg',
- 2: 'DIAMOND-2.svg',
- 3: 'HEART-2.svg',
- 4: 'SPADE-2.svg',
- 5: 'CLUB-3.svg',
- 6: 'DIAMOND-3.svg',
- 7: 'HEART-3.svg',
- 8: 'SPADE-3.svg',
- 9: 'CLUB-4.svg',
- 10: 'DIAMOND-4.svg',
- 11: 'HEART-4.svg',
- 12: 'SPADE-4.svg',
- 13: 'CLUB-5.svg',
- 14: 'DIAMOND-5.svg',
- 15: 'HEART-5.svg',
- 16: 'SPADE-5.svg',
- 17: 'CLUB-6.svg',
- 18: 'DIAMOND-6.svg',
- 19: 'HEART-6.svg',
- 20: 'SPADE-6.svg',
- 21: 'CLUB-7.svg',
- 22: 'DIAMOND-7.svg',
- 23: 'HEART-7.svg',
- 24: 'SPADE-7.svg',
- 25: 'CLUB-8.svg',
- 26: 'DIAMOND-8.svg',
- 27: 'HEART-8.svg',
- 28: 'SPADE-8.svg',
- 29: 'CLUB-9.svg',
- 30: 'DIAMOND-9.svg',
- 31: 'HEART-9.svg',
- 32: 'SPADE-9.svg',
- 33: 'CLUB-10.svg',
- 34: 'DIAMOND-10.svg',
- 35: 'HEART-10.svg',
- 36: 'SPADE-10.svg',
- 37: 'CLUB-11-JACK.svg',
- 38: 'DIAMOND-11-JACK.svg',
- 39: 'HEART-11-JACK.svg',
- 40: 'SPADE-11-JACK.svg',
- 41: 'CLUB-12-QUEEN.svg',
- 42: 'DIAMOND-12-QUEEN.svg',
- 43: 'HEART-12-QUEEN.svg',
- 44: 'SPADE-12-QUEEN.svg',
- 45: 'CLUB-13-KING.svg',
- 46: 'DIAMOND-13-KING.svg',
- 47: 'HEART-13-KING.svg',
- 48: 'SPADE-13-KING.svg',
- 49: 'CLUB-1.svg',
- 50: 'DIAMOND-1.svg',
- 51: 'HEART-1.svg',
- 52: 'SPADE-1.svg'
-}
+const flip = (data) => Object.fromEntries(
+  Object
+    .entries(data)
+    .map(([key, value]) => [value, key])
+  );  
+
+CARDS_INV = flip(CARDS);
+
+const suit_dict = {'s': '\u2660', 'd': '\u2666', 'c': '\u2663', 'h': '\u2665'}
+const color_dict = {'s': 'black', 'd': 'blue', 'c': 'green', 'h': 'red'}
+
+class Card {
+  constructor(suit, value, card_id, parent_id, face="up") {
+    this.suit = suit;
+    this.value = value;
+    this.card_id = card_id;
+    this.parent_id = parent_id;
+    this.face = face;
+
+    const parent_element = document.getElementById(this.parent_id);
+    
+    const card = document.createElement("div");
+    card.setAttribute("id", card_id);
+    card.setAttribute("class", "card");
+    card.setAttribute("style", "--suit_color: " + color_dict[this.suit])
+    this.card = card;
+    
+    const main_suit = document.createElement("div");
+    main_suit.setAttribute("class", "main_suit");
+    main_suit.innerHTML = suit_dict[this.suit]
+    this.main_suit = main_suit;
+    
+    const left_suit = document.createElement("div");
+    left_suit.setAttribute("class", "left_suit");
+    left_suit.innerHTML = value + "<br>" + suit_dict[this.suit]
+    this.left_suit = left_suit;
+    
+    const right_suit = document.createElement("div");
+    right_suit.setAttribute("class", "right_suit");
+    right_suit.innerHTML = value + "<br>" + suit_dict[this.suit]
+    this.right_suit = right_suit;
+    
+    this.card.appendChild(this.main_suit)
+    this.card.appendChild(this.right_suit)
+    this.card.appendChild(this.left_suit)
+    
+    parent_element.appendChild(this.card)
+    
+    // this.face_up()
+    // this.face_down()
+   
+    
+  }
+    
+  face_down() {
+    this.card.setAttribute("class", "backside");
+    this.main_suit.style.visibility = "hidden";
+    this.left_suit.style.visibility = "hidden";
+    this.right_suit.style.visibility = "hidden";
+  }
   
+  face_up() {
+    this.card.setAttribute("class", "card");
+    this.main_suit.style.visibility = "visible";
+    this.left_suit.style.visibility = "visible";
+    this.right_suit.style.visibility = "visible";
+  }
+    
+}
+		  
+  
+
 
 function choice(size, drawn = new Array(), N=52) {
   // choice function (for drawing N cards without replacement.  If some cards are already drawn, they can be included as an array in the drawn argument)
@@ -123,7 +140,7 @@ function choice(size, drawn = new Array(), N=52) {
   }
   var indices = new Set(Array.from(drawn).map(i => i - 1));
   while (indices.size < size + drawn.length) {
-    const index = Math.floor(Math.random() * N);
+    index = Math.floor(Math.random() * N);
     if (!indices.has(index)) {
       indices.add(index);
     }
@@ -151,25 +168,14 @@ const hand = choice(2)
 const hole1_value = hand[0];
 const hole2_value = hand[1];
 
-// Create image element for the first random number
-const hole1 = document.getElementById("hole1");
-const hole2 = document.getElementById("hole2");
-
-hole1.src = "CardFaces/" + CARD2FILE[hole1_value];
-hole1.alt = 'Image of card1';
-hole2.src = "CardFaces/" + CARD2FILE[hole2_value];
-hole2.alt = 'Image of card2';
+const hole1 = new Card('h', '5', card_id="hole1", parent_id="container", face="up")
+const hole2 = new Card('c', 'K', card_id="hole1", parent_id="container", face="up")
+const hole3 = new Card('s', '10', card_id="hole1", parent_id="container", face="up")
+const hole4 = new Card('d', 'Q', card_id="hole1", parent_id="container", face="up")
 
 
-// Initialize table
-//const wasmUrl = 'my-module.wasm';
-
-// Load WebAssembly module
-//const wasmModule = WebAssembly.instantiateStreaming(fetch(wasmUrl));
 
 }
-
-// drawHoleCards()
 var submit_button = document.getElementById("submit_button");
 submit_button.onclick = drawHoleCards;
 
@@ -212,9 +218,9 @@ function get_river_index(c) {
     return HR[HR[HR[HR[HR[53+c[0]]+c[1]]+c[2]]+c[3]]+c[4]]
 }
 
-function get_individual_hand_rank(h, river_index) {
+function get_individual_hand_rank(c, river_index) {
     // hand value after the community cards + 2 hole cards
-    return HR[HR[river_index+h[0]]+h[1]]
+    return HR[HR[river_index+c[0]]+c[1]]
 }
 
 
@@ -223,26 +229,53 @@ function draw_and_rank_hand() {
 	return rank_hand(cards)
 }
 
-function get_preflop_win_probability(own_cards, n_players, trials=1000) {
+function get_preflop_win_probability(own_cards, n_players, trials=1000, include_winning_hand_stats=false) {
   var wins = 0;
+  var mean_winning_rank = 0;
   var winning_rank = 0;
-  for (let i = 0; i <= trials; i++) {
-    cards = choice(5 + 2*(n_players-1), own_cards)
-	table_cards = cards.slice(0, 5)
+  var river_index;
+  for (let i = 0; i < trials; i++) {
+      cards = choice(5 + 2*(n_players-1), own_cards);
+	table_cards = cards.slice(0, 5);
 	river_index = get_river_index(table_cards);
-	own_rank = get_individual_hand_rank(own_cards, river_index)
+	own_rank = get_individual_hand_rank(own_cards, river_index);
+      test_rank = get_hand_value(table_cards.concat(own_cards));
+      console.log(own_rank);
+      console.log(test_rank);
+      console.log(CARD2FILE[own_cards[0]])
+      console.log(CARD2FILE[own_cards[1]])
+      console.log(CARD2FILE[table_cards[0]])
+      console.log(CARD2FILE[table_cards[1]])
+      console.log(CARD2FILE[table_cards[2]])
+      console.log(CARD2FILE[table_cards[3]])
+      console.log(CARD2FILE[table_cards[4]])
+      console.log(['error', 'high card', 'one pair', 'two pair', 'trips', 'straight', 'flush', 'full house', 'quads', 'straight flush'][Math.floor(own_rank >> 12)]);
+	if (include_winning_hand_stats) {
+		winning_rank = own_rank;
+	}
 	win = 1
 	for (let j = 0; j <= n_players; j++) {
-	  player_cards = cards.slice(5+2*j, 5+2*j+2)
-	  player_rank = get_individual_hand_rank(player_cards, river_index)
+	  player_cards = cards.slice(5+2*j, 5+2*j+2);
+	  player_rank = get_individual_hand_rank(player_cards, river_index);
 	  if (player_rank >= own_rank) {
 	    win = 0
-		break;
+		if (!include_winning_hand_stats) {
+		  break;
+	      } else {
+		  winning_rank = player_rank;
+	      }
 	  }
 	}
 	wins += win
+	if (include_winning_hand_stats) {
+	  mean_winning_rank += winning_rank	
+	}
   }
-  return  wins/trials // winning percentage
+  if (!include_winning_hand_stats) {
+    return  wins/trials; // winning percentage
+  } else {
+    return [wins/trials, mean_winning_rank/trials];
+  }
 }
 
 function get_hand_type(rank) {
