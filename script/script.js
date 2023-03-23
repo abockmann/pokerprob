@@ -139,6 +139,7 @@ function choice(size, drawn = new Array(), N=52) {
     throw new Error('size cannot be greater than length of array');
   }
   var indices = new Set(Array.from(drawn).map(i => i - 1));
+  
   while (indices.size < size + drawn.length) {
     index = Math.floor(Math.random() * N);
     if (!indices.has(index)) {
@@ -162,18 +163,18 @@ slider.oninput = function() {
 
 // submit button
 
+
 function drawHoleCards() {
 // Generate two random integers between 1 and 52 (these can now be the same, which is a bug)
 const hand = choice(2)
 const hole1_value = hand[0];
 const hole2_value = hand[1];
 
-const hole1 = new Card('h', '5', card_id="hole1", parent_id="container", face="up")
-const hole2 = new Card('c', 'K', card_id="hole1", parent_id="container", face="up")
-const hole3 = new Card('s', '10', card_id="hole1", parent_id="container", face="up")
-const hole4 = new Card('d', 'Q', card_id="hole1", parent_id="container", face="up")
+// remove existing cards
+var card_container = document.getElementById("container").innerHTML = ""
 
-
+hole1 = new Card(CARDS_INV[hole1_value][1], CARDS_INV[hole1_value][0].toUpperCase().replace("T", "10"), card_id="hole1", parent_id="container", face="up")
+hole2 = new Card(CARDS_INV[hole2_value][1], CARDS_INV[hole2_value][0].toUpperCase().replace("T", "10"), card_id="hole2", parent_id="container", face="up")
 
 }
 var submit_button = document.getElementById("submit_button");
