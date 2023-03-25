@@ -108,8 +108,11 @@ class Card {
     
     parent_element.appendChild(this.card)
     
-    // this.face_up()
-    // this.face_down()
+    if (face == "up") {
+      this.face_up();
+    } else if (face == "down") {
+      this.face_down();
+    }
   }
     
   face_down() {
@@ -211,9 +214,16 @@ function distributePoints(numPoints, width, height, c0=0, origin=[0,0]) {
   return points;
 }
 
-function getPlayerCoordinates(nPlayers, width, height, c0=0, origin=[0,0]) {
-  coords = distributePoints(nPlayers, width, height, c0=c0, origin)
-  myInd = 0; // index of human player in the coordinate array
+function getPlayerCoordinates(numPlayers) {
+  w = 90;
+  h = 80;
+  c0_right = w - h + 0.25*h*Math.PI; // start at right side of table
+  c0_middle = 0.5*(w - h); // start at bottom-middle of table
+  origin = [45,-3]
+
+  coords = distributePoints(numPlayers, width=w, height=h, c0=c0_middle, origin=origin);
+  myInd = 0; // position of human player
+
   return { coords, myInd }
 }
 		  
@@ -265,17 +275,15 @@ hole2 = new Card(CARDS_INV[hole2_value][1], CARDS_INV[hole2_value][0].toUpperCas
 }
 
 function setupTable() {
- w = 90;
- h = 80;
- c0 = w - h + 0.25*h*Math.PI;
- numPlayers = 6;
- ret = getPlayerCoordinates(  numPlayers, width=w, height=h, c0=c0, origin=[45,-3]);
+  
+ ret = getPlayerCoordinates(numPlayers=8);
 
  player_coords = ret.coords;
  myind = ret.myInd;
  // drawHoleCards();
  var table = document.getElementById("table");
  
+
 
   let card_containers = [];
   for (let i = 0; i <  numPlayers; i++) {
@@ -285,8 +293,10 @@ function setupTable() {
     card_containers[i].style.left = `${player_coords[i][0]}%`
     card_containers[i].style.bottom = `${player_coords[i][1]}%`
     table.appendChild(card_containers[i]);
-    new Card(CARDS_INV[1][1], CARDS_INV[2][0].toUpperCase().replace("T", "10"), card_id=`player_${i}_card1`, parent_id=`player_${i}`, face="up")
-    new Card(CARDS_INV[2][1], CARDS_INV[3][0].toUpperCase().replace("T", "10"), card_id=`player_${i}_card2`, parent_id=`player_${i}`, face="up")
+    face = (i == myind ? "up" : "down")
+    console.log(face)
+    new Card(CARDS_INV[1][1], CARDS_INV[2][0].toUpperCase().replace("T", "10"), card_id=`player_${i}_card1`, parent_id=`player_${i}`, face=face)
+    new Card(CARDS_INV[2][1], CARDS_INV[3][0].toUpperCase().replace("T", "10"), card_id=`player_${i}_card2`, parent_id=`player_${i}`, face=face)
   }
 }
 
