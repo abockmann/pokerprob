@@ -204,11 +204,17 @@ function distributePoints(numPoints, width, height, c0=0, origin=[0,0]) {
   let points = [];
   c = c0;
   for (let i = 0; i < numPoints; i++) {
-    x = get_coord(c, width, height, origin=[0, 0])
+    x = get_coord(c, width, height, origin=origin)
     c += deltaCircumference;
     points.push(x);
   }
   return points;
+}
+
+function getPlayerCoordinates(nPlayers, width, height, c0=0, origin=[0,0]) {
+  coords = distributePoints(nPlayers, width, height, c0=c0, origin)
+  myInd = 0; // index of human player in the coordinate array
+  return { coords, myInd }
 }
 		  
   
@@ -256,10 +262,38 @@ var card_container = document.getElementById("container").innerHTML = ""
 
 hole1 = new Card(CARDS_INV[hole1_value][1], CARDS_INV[hole1_value][0].toUpperCase().replace("T", "10"), card_id="hole1", parent_id="container", face="up")
 hole2 = new Card(CARDS_INV[hole2_value][1], CARDS_INV[hole2_value][0].toUpperCase().replace("T", "10"), card_id="hole2", parent_id="container", face="up")
-
 }
+
+function setupTable() {
+ w = 90;
+ h = 80;
+ c0 = w - h + 0.25*h*Math.PI;
+ numPlayers = 6;
+ ret = getPlayerCoordinates(  numPlayers, width=w, height=h, c0=c0, origin=[45,-3]);
+
+ player_coords = ret.coords;
+ myind = ret.myInd;
+ // drawHoleCards();
+ var table = document.getElementById("table");
+ 
+
+  let card_containers = [];
+  for (let i = 0; i <  numPlayers; i++) {
+    card_containers.push(document.createElement("div"));
+    card_containers[i].setAttribute("id", `player_${i}`);
+    card_containers[i].setAttribute("class", "card_container");
+    card_containers[i].style.left = `${player_coords[i][0]}%`
+    card_containers[i].style.bottom = `${player_coords[i][1]}%`
+    table.appendChild(card_containers[i]);
+    new Card(CARDS_INV[1][1], CARDS_INV[2][0].toUpperCase().replace("T", "10"), card_id=`player_${i}_card1`, parent_id=`player_${i}`, face="up")
+    new Card(CARDS_INV[2][1], CARDS_INV[3][0].toUpperCase().replace("T", "10"), card_id=`player_${i}_card2`, parent_id=`player_${i}`, face="up")
+  }
+}
+
+
+
 var submit_button = document.getElementById("submit_button");
-submit_button.onclick = drawHoleCards;
+submit_button.onclick = setupTable;
 
 
 // Unpack table.dat
