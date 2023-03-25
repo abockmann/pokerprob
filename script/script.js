@@ -110,8 +110,6 @@ class Card {
     
     // this.face_up()
     // this.face_down()
-   
-    
   }
     
   face_down() {
@@ -128,6 +126,89 @@ class Card {
     this.right_suit.style.visibility = "visible";
   }
     
+}
+
+class Table {
+  constructor(num_players) {
+    this.num_players = num_players;
+  }
+}
+
+function searchsorted(arr, value, side='left') {
+  // same as numpy's function
+  let index = arr.findIndex((x) => x >= value);
+  
+  if (side === 'left') {
+    return index;
+  } else if (side === 'right') {
+    if (index === -1) {
+      return arr.length;
+    } else {
+      return index;
+    }
+  } else {
+    throw new Error("Invalid side argument. Must be 'left' or 'right'");
+  }
+}
+
+function get_hextant(c, w, h) {
+  // c is the circumferential coordinate starting at the bottom left corner of the middle rectangle, w is the total width and h is the total height.
+  rw = w - h; // the width of the middle rectangle
+  chc = 0.5*Math.PI*h;
+  segments = [rw, chc, rw, chc, rw, chc, rw, chc]
+  cumsum = (sum => value => sum += value)(0);
+  distance = segments.map(cumsum);
+  iseg = searchsorted(distance, c); // the segment the point is in
+  if (iseg == 0) { 
+    curdist = c;
+  } else {
+    curdist = c - distance[iseg-1];
+  }
+  if (iseg > 3) {
+    iseg = iseg - 4;
+  }
+  return { iseg, curdist } // return the index of the current segment (starting form the bottom segment), and the distance travelled along the current segment
+}
+
+function get_coord(c, w, h, origin=[0, 0]) {
+  // c is the circumferential coordinate
+  // origin is the coordinate of the lower straight side of the table at left, just where the curve ends
+  hex = get_hextant(c, w, h);
+  iseg = hex.iseg;
+  curdist = hex.curdist;
+  R = 0.5*h;
+  let x = Array(2);
+  if (iseg == 0) {
+    x[0] = curdist;
+    x[1] = 0.;
+  } else if (iseg == 1) {
+    ang = curdist/R;
+    x[0] = w - h + R*Math.sin(ang);
+    x[1] = R*(1. - Math.cos(ang));
+  } else if (iseg == 2) {
+      x[0] = w - h - curdist;
+      x[1] = h;
+  } else if (iseg == 3) {
+      ang = curdist/R;
+      x[0] = -R*Math.sin(ang);
+      x[1] = R*(1. + Math.cos(ang));
+  }
+  x[0] = x[0] + origin[0];
+  x[1] = x[1] + origin[1];
+  return x
+}
+
+function distributePoints(numPoints, width, height, c0=0, origin=[0,0]) {
+  const circumference = 2 * (width - height) + Math.PI * height;
+  const deltaCircumference = circumference / numPoints;
+  let points = [];
+  c = c0;
+  for (let i = 0; i < numPoints; i++) {
+    x = get_coord(c, width, height, origin=[0, 0])
+    c += deltaCircumference;
+    points.push(x);
+  }
+  return points;
 }
 		  
   

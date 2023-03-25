@@ -85,7 +85,7 @@ border-width: 1px;
 border-radius: 10% / 7%;;
 box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
 z-index: 5;
-background: linear-gradient(#fffdf7, #f5f3eb);
+background: #fcfbf5;
 color: var(--suit_color);
 border-color: black;
 font-family: "Verdana"; 
