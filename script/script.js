@@ -276,14 +276,18 @@ hole2 = new Card(CARDS_INV[hole2_value][1], CARDS_INV[hole2_value][0].toUpperCas
 
 function setupTable() {
   
- ret = getPlayerCoordinates(numPlayers=8);
+ ret = getPlayerCoordinates(numPlayers=6);
 
  player_coords = ret.coords;
- myind = ret.myInd;
+ myInd = ret.myInd;
  // drawHoleCards();
  var table = document.getElementById("table");
+ table.innerHTML = "";  // clear table
  
-
+  const hand = choice(2);
+  const hole1_value = hand[0];
+  const hole2_value = hand[1];
+ 
 
   let card_containers = [];
   for (let i = 0; i <  numPlayers; i++) {
@@ -293,10 +297,13 @@ function setupTable() {
     card_containers[i].style.left = `${player_coords[i][0]}vh`
     card_containers[i].style.bottom = `${player_coords[i][1]}vh`
     table.appendChild(card_containers[i]);
-    face = (i == myind ? "up" : "down")
-    console.log(face)
-    new Card(CARDS_INV[1][1], CARDS_INV[2][0].toUpperCase().replace("T", "10"), card_id=`player_${i}_card1`, parent_id=`player_${i}`, face=face)
-    new Card(CARDS_INV[2][1], CARDS_INV[3][0].toUpperCase().replace("T", "10"), card_id=`player_${i}_card2`, parent_id=`player_${i}`, face=face)
+    if (i == myInd) {
+      hole1 = new Card(CARDS_INV[hole1_value][1], CARDS_INV[hole1_value][0].toUpperCase().replace("T", "10"), card_id="hole1", parent_id=`player_${i}`, face="up")
+      hole2 = new Card(CARDS_INV[hole2_value][1], CARDS_INV[hole2_value][0].toUpperCase().replace("T", "10"), card_id="hole2", parent_id=`player_${i}`, face="up") 
+    } else {
+      new Card("", "", card_id=`player_${i}_card1`, parent_id=`player_${i}`, face="down")
+      new Card("", "", card_id=`player_${i}_card2`, parent_id=`player_${i}`, face="down")
+    }
   }
 }
 
