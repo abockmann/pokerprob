@@ -2,8 +2,7 @@
 
 // hand rank table
 var HR;
-
- var numPlayers = 10;
+var numPlayers = 10;
 
 // cards
 
@@ -257,6 +256,12 @@ slider.oninput = function() {
 	output.innerHTML = this.value + "%";
 }
 
+function setPlayers(event) {
+  numPlayers = Number(event.target.innerHTML);
+  deal();
+}
+
+
 // submit button
 
 function deal() {
@@ -289,11 +294,20 @@ function deal() {
       new Card(1, card_id=`player_${i}_card2`, parent_id=`player_${i}`, face="down")
     }
   }
-  // change button functionality
+  // Deal/Check button functionality
   var submit_button = document.getElementById("submit_button");
   submit_button.innerHTML = "Check"
   submit_button.onclick = check;
+  
 }
+
+// Players button functionality
+for (let n = 2; n <= 10; n++) {
+  var players_choice = document.getElementById(`player${n}`);
+  players_choice.onclick = setPlayers;
+}
+
+
 
 function check() {
  // evaluate existing table and change button back

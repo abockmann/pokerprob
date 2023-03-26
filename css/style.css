@@ -155,7 +155,7 @@ z-index: 101;
 	width: 80%;
 	margin-top: 50px;
 	height: 100px;
-	bottom: 5%;
+	bottom: 0vh;
     left: 0; 
     right: 0; 
     margin-left: auto; 
@@ -171,7 +171,6 @@ z-index: 101;
 	background: #ddd;
 	outline: none;
 	opacity: 0.7;
-	-webkit-transition: .2s;
 	transition: opacity .2s;
 	position: relative;
 }
@@ -219,13 +218,55 @@ z-index: 101;
 	padding:13px 31px;
 	text-decoration:none;
 	text-shadow:5px 5px 3px #263666;
-	&:hover {
-	background:linear-gradient(to bottom, #415989 5%, #2e466e 100%);
-	background-color:#415989;
+  min-width: 40px;
+  text-align: center;
 }
- &:active {
-	position:relative;
-	top:1px;
+
+.submit:hover {
+  background: #293857;
 }
- }
+
+
+.dropbtn {
+  background-color: #415989;
+	box-shadow:inset 0px 0px 15px 3px #23395e;
+  color: white;
+  padding: 8px;
+  font-size: 16px;
+  cursor: pointer;
+	font-family:Impact;
+	font-size:15px;
+  border:2px solid #1f2f47;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color: #293857;
+}
         
