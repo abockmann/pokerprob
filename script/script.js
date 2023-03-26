@@ -215,11 +215,11 @@ function distributePoints(numPoints, width, height, c0=0, origin=[0,0]) {
 }
 
 function getPlayerCoordinates(numPlayers) {
-  w = 90;
-  h = 80;
+  w = 105;
+  h = 50;
   c0_right = w - h + 0.25*h*Math.PI; // start at right side of table
   c0_middle = 0.5*(w - h); // start at bottom-middle of table
-  origin = [45,-3]
+  origin = [32.5,-2.8]
 
   coords = distributePoints(numPlayers, width=w, height=h, c0=c0_middle, origin=origin);
   myInd = 0; // position of human player
@@ -290,8 +290,8 @@ function setupTable() {
     card_containers.push(document.createElement("div"));
     card_containers[i].setAttribute("id", `player_${i}`);
     card_containers[i].setAttribute("class", "card_container");
-    card_containers[i].style.left = `${player_coords[i][0]}%`
-    card_containers[i].style.bottom = `${player_coords[i][1]}%`
+    card_containers[i].style.left = `${player_coords[i][0]}vh`
+    card_containers[i].style.bottom = `${player_coords[i][1]}vh`
     table.appendChild(card_containers[i]);
     face = (i == myind ? "up" : "down")
     console.log(face)
