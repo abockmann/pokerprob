@@ -306,6 +306,9 @@ function check() {
    // debug
    var output = document.getElementById("sliderValue")
    output.innerHTML = `${100*win_prob}` + "%";
+   
+   var slider = document.getElementById("mySlider")
+   slider.setAttribute("value", 100*win_prob) 
 
   var submit_button = document.getElementById("submit_button");
   submit_button.innerHTML = "Deal"
