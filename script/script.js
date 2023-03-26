@@ -72,9 +72,11 @@ const suit_dict = {'s': '\u2660', 'd': '\u2666', 'c': '\u2663', 'h': '\u2665'}
 const color_dict = {'s': 'black', 'd': 'blue', 'c': 'green', 'h': 'red'}
 
 class Card {
-  constructor(suit, value, card_id, parent_id, face="up") {
-    this.suit = suit;
-    this.value = value;
+  constructor(cardNum, card_id, parent_id, face="up") {
+    
+    this.cardNum = cardNum
+    this.suit =  CARDS_INV[this.cardNum][1]
+    this.value = CARDS_INV[this.cardNum][0].toUpperCase().replace("T", "10")
     this.card_id = card_id;
     this.parent_id = parent_id;
     this.face = face;
@@ -85,6 +87,7 @@ class Card {
     card.setAttribute("id", card_id);
     card.setAttribute("class", "card");
     card.setAttribute("style", "--suit_color: " + color_dict[this.suit])
+    card.setAttribute("cardNum", `${cardNum}`)
     this.card = card;
     
     const main_suit = document.createElement("div");
@@ -94,12 +97,12 @@ class Card {
     
     const left_suit = document.createElement("div");
     left_suit.setAttribute("class", "left_suit");
-    left_suit.innerHTML = value + "<br>" + suit_dict[this.suit]
+    left_suit.innerHTML = this.value + "<br>" + suit_dict[this.suit]
     this.left_suit = left_suit;
     
     const right_suit = document.createElement("div");
     right_suit.setAttribute("class", "right_suit");
-    right_suit.innerHTML = value + "<br>" + suit_dict[this.suit]
+    right_suit.innerHTML = this.value + "<br>" + suit_dict[this.suit]
     this.right_suit = right_suit;
     
     this.card.appendChild(this.main_suit)
@@ -260,34 +263,37 @@ slider.oninput = function() {
 
 // submit button
 
-
-function drawHoleCards() {
-// Generate two random integers between 1 and 52 (these can now be the same, which is a bug)
-const hand = choice(2)
-const hole1_value = hand[0];
-const hole2_value = hand[1];
-
-// remove existing cards
-var card_container = document.getElementById("container").innerHTML = ""
-
-hole1 = new Card(CARDS_INV[hole1_value][1], CARDS_INV[hole1_value][0].toUpperCase().replace("T", "10"), card_id="hole1", parent_id="container", face="up")
-hole2 = new Card(CARDS_INV[hole2_value][1], CARDS_INV[hole2_value][0].toUpperCase().replace("T", "10"), card_id="hole2", parent_id="container", face="up")
-}
-
 function setupTable() {
   
- ret = getPlayerCoordinates(numPlayers=6);
+  var numPlayers = 10;
+   
+
+ 
+ // evaluate existing table ...
+ try {
+   var hole1 = document.getElementById("hole1");
+   var hole2 = document.getElementById("hole2");
+   var v1 = Number(hole1.getAttribute("cardNum"));
+   var v2 = Number(hole1.getAttribute("cardNum"));
+   var win_prob = get_preflop_win_probability([v1, v2], numPlayers, trials=1000, include_winning_hand_stats=false);
+   // debug
+   var output = document.getElementById("sliderValue")
+   output.innerHTML = win_prob;
+   } catch (e) {
+ }
+ 
+ 
+ ret = getPlayerCoordinates(numPlayers=numPlayers);
 
  player_coords = ret.coords;
  myInd = ret.myInd;
  // drawHoleCards();
  var table = document.getElementById("table");
- table.innerHTML = "";  // clear table
+ table.innerHTML = '<div class="table_line"></div>';  // clear table
  
   const hand = choice(2);
   const hole1_value = hand[0];
   const hole2_value = hand[1];
- 
 
   let card_containers = [];
   for (let i = 0; i <  numPlayers; i++) {
@@ -298,17 +304,17 @@ function setupTable() {
     card_containers[i].style.bottom = `${player_coords[i][1]}vh`
     table.appendChild(card_containers[i]);
     if (i == myInd) {
-      hole1 = new Card(CARDS_INV[hole1_value][1], CARDS_INV[hole1_value][0].toUpperCase().replace("T", "10"), card_id="hole1", parent_id=`player_${i}`, face="up")
-      hole2 = new Card(CARDS_INV[hole2_value][1], CARDS_INV[hole2_value][0].toUpperCase().replace("T", "10"), card_id="hole2", parent_id=`player_${i}`, face="up") 
+      hole1 = new Card(hole1_value, card_id="hole1", parent_id=`player_${i}`, face="up")
+      hole2 = new Card(hole2_value, card_id="hole2", parent_id=`player_${i}`, face="up") 
     } else {
-      new Card("", "", card_id=`player_${i}_card1`, parent_id=`player_${i}`, face="down")
-      new Card("", "", card_id=`player_${i}_card2`, parent_id=`player_${i}`, face="down")
+      new Card(1, card_id=`player_${i}_card1`, parent_id=`player_${i}`, face="down")
+      new Card(1, card_id=`player_${i}_card2`, parent_id=`player_${i}`, face="down")
     }
   }
 }
 
 
-
+setupTable()
 var submit_button = document.getElementById("submit_button");
 submit_button.onclick = setupTable;
 
@@ -369,20 +375,13 @@ function get_preflop_win_probability(own_cards, n_players, trials=1000, include_
   var river_index;
   for (let i = 0; i < trials; i++) {
       cards = choice(5 + 2*(n_players-1), own_cards);
-	table_cards = cards.slice(0, 5);
-	river_index = get_river_index(table_cards);
-	own_rank = get_individual_hand_rank(own_cards, river_index);
+      table_cards = cards.slice(0, 5);
+      river_index = get_river_index(table_cards);
+      own_rank = get_individual_hand_rank(own_cards, river_index);
       test_rank = get_hand_value(table_cards.concat(own_cards));
-      console.log(own_rank);
-      console.log(test_rank);
-      console.log(CARD2FILE[own_cards[0]])
-      console.log(CARD2FILE[own_cards[1]])
-      console.log(CARD2FILE[table_cards[0]])
-      console.log(CARD2FILE[table_cards[1]])
-      console.log(CARD2FILE[table_cards[2]])
-      console.log(CARD2FILE[table_cards[3]])
-      console.log(CARD2FILE[table_cards[4]])
-      console.log(['error', 'high card', 'one pair', 'two pair', 'trips', 'straight', 'flush', 'full house', 'quads', 'straight flush'][Math.floor(own_rank >> 12)]);
+      //console.log(own_rank);
+      //console.log(test_rank);
+      //console.log(['error', 'high card', 'one pair', 'two pair', 'trips', 'straight', 'flush', 'full house', 'quads', 'straight flush'][Math.floor(own_rank >> 12)]);
 	if (include_winning_hand_stats) {
 		winning_rank = own_rank;
 	}
