@@ -278,7 +278,7 @@ function setupTable() {
    var win_prob = get_preflop_win_probability([v1, v2], numPlayers, trials=1000, include_winning_hand_stats=false);
    // debug
    var output = document.getElementById("sliderValue")
-   output.innerHTML = win_prob;
+   output.innerHTML = `${100*win_prob}` + "%";
    } catch (e) {
  }
  
