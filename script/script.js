@@ -3,6 +3,8 @@
 // hand rank table
 var HR;
 
+ var numPlayers = 10;
+
 // cards
 
 const CARDS = {
@@ -134,12 +136,6 @@ class Card {
     
 }
 
-class Table {
-  constructor(num_players) {
-    this.num_players = num_players;
-  }
-}
-
 function searchsorted(arr, value, side='left') {
   // same as numpy's function
   let index = arr.findIndex((x) => x >= value);
@@ -263,26 +259,8 @@ slider.oninput = function() {
 
 // submit button
 
-function setupTable() {
-  
-  var numPlayers = 10;
-   
+function deal() {
 
- 
- // evaluate existing table ...
- try {
-   var hole1 = document.getElementById("hole1");
-   var hole2 = document.getElementById("hole2");
-   var v1 = Number(hole1.getAttribute("cardNum"));
-   var v2 = Number(hole1.getAttribute("cardNum"));
-   var win_prob = get_preflop_win_probability([v1, v2], numPlayers, trials=1000, include_winning_hand_stats=false);
-   // debug
-   var output = document.getElementById("sliderValue")
-   output.innerHTML = `${100*win_prob}` + "%";
-   } catch (e) {
- }
- 
- 
  ret = getPlayerCoordinates(numPlayers=numPlayers);
 
  player_coords = ret.coords;
@@ -311,12 +289,32 @@ function setupTable() {
       new Card(1, card_id=`player_${i}_card2`, parent_id=`player_${i}`, face="down")
     }
   }
+  // change button functionality
+  var submit_button = document.getElementById("submit_button");
+  submit_button.innerHTML = "Check"
+  submit_button.onclick = check;
+}
+
+function check() {
+ // evaluate existing table and change button back
+
+   var hole1 = document.getElementById("hole1");
+   var hole2 = document.getElementById("hole2");
+   var v1 = Number(hole1.getAttribute("cardNum"));
+   var v2 = Number(hole2.getAttribute("cardNum"));
+   var win_prob = get_preflop_win_probability([v1, v2], trials=1000, include_winning_hand_stats=false);
+   // debug
+   var output = document.getElementById("sliderValue")
+   output.innerHTML = `${100*win_prob}` + "%";
+
+  var submit_button = document.getElementById("submit_button");
+  submit_button.innerHTML = "Deal"
+  submit_button.onclick = deal;
 }
 
 
-setupTable()
-var submit_button = document.getElementById("submit_button");
-submit_button.onclick = setupTable;
+deal()
+
 
 
 // Unpack table.dat
@@ -368,13 +366,13 @@ function draw_and_rank_hand() {
 	return rank_hand(cards)
 }
 
-function get_preflop_win_probability(own_cards, n_players, trials=1000, include_winning_hand_stats=false) {
+function get_preflop_win_probability(own_cards, trials=1000) {
   var wins = 0;
   var mean_winning_rank = 0;
   var winning_rank = 0;
   var river_index;
   for (let i = 0; i < trials; i++) {
-      cards = choice(5 + 2*(n_players-1), own_cards);
+      cards = choice(5 + 2*(numPlayers-1), own_cards);
       table_cards = cards.slice(0, 5);
       river_index = get_river_index(table_cards);
       own_rank = get_individual_hand_rank(own_cards, river_index);
@@ -382,32 +380,18 @@ function get_preflop_win_probability(own_cards, n_players, trials=1000, include_
       //console.log(own_rank);
       //console.log(test_rank);
       //console.log(['error', 'high card', 'one pair', 'two pair', 'trips', 'straight', 'flush', 'full house', 'quads', 'straight flush'][Math.floor(own_rank >> 12)]);
-	if (include_winning_hand_stats) {
-		winning_rank = own_rank;
-	}
-	win = 1
-	for (let j = 0; j <= n_players; j++) {
-	  player_cards = cards.slice(5+2*j, 5+2*j+2);
-	  player_rank = get_individual_hand_rank(player_cards, river_index);
-	  if (player_rank >= own_rank) {
-	    win = 0
-		if (!include_winning_hand_stats) {
-		  break;
-	      } else {
-		  winning_rank = player_rank;
-	      }
-	  }
-	}
+      win = 1;
+      for (let j = 0; j < (numPlayers-1); j++) {
+        player_cards = cards.slice(5+2*j, 5+2*j+2);
+        player_rank = get_individual_hand_rank(player_cards, river_index);
+        if (player_rank >= own_rank) {
+          win = 0
+          break;
+        }
+      }
 	wins += win
-	if (include_winning_hand_stats) {
-	  mean_winning_rank += winning_rank	
-	}
   }
-  if (!include_winning_hand_stats) {
-    return  wins/trials; // winning percentage
-  } else {
-    return [wins/trials, mean_winning_rank/trials];
-  }
+  return  wins/trials; // winning percentage
 }
 
 function get_hand_type(rank) {

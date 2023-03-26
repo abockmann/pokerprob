@@ -61,18 +61,17 @@ border-radius: 5%;
 height: auto;
 aspect-ratio: 0.7;
 border: solid;
-border-width: 1px;
+border-width: 0.5vh;
 border-radius: 10% / 7%;;
 box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px;
-z-index: 5;
+z-index: 100;
 background-image: url("backside.svg");
-background-size: 1.5vh;
-border-color: black;
+image-rendering: high-quality;
+background-size: 1vh;
+border-color: white;
 font-family: "Verdana"; 
 float: left;
 transform: scale(1.0);
-line-height: 2.5vh;
-letter-spacing: -0.5vh;
 opacity: 100%;
 }
 
