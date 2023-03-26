@@ -28,6 +28,17 @@
 	opacity: 0.2;
 }
 
+.table_print {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+  height: 20vh;
+	transform: translate(-50%, -50%);
+	padding: 10px;
+	z-index: 500;
+  opacity: 0.2;
+}
+
 .table_pattern {
 	position: absolute;
 	top: 50%;

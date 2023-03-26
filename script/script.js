@@ -302,7 +302,7 @@ function check() {
    var hole2 = document.getElementById("hole2");
    var v1 = Number(hole1.getAttribute("cardNum"));
    var v2 = Number(hole2.getAttribute("cardNum"));
-   var win_prob = get_preflop_win_probability([v1, v2], trials=1000000, include_winning_hand_stats=false);
+   var win_prob = get_preflop_win_probability([v1, v2], trials=100000, include_winning_hand_stats=false);
    // debug
    var output = document.getElementById("sliderValue")
    output.innerHTML = `${Math.round(10*100*win_prob)/10}` + "%"; // *10 / 10 is a trick to round to 1 decimal
