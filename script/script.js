@@ -302,13 +302,14 @@ function check() {
    var hole2 = document.getElementById("hole2");
    var v1 = Number(hole1.getAttribute("cardNum"));
    var v2 = Number(hole2.getAttribute("cardNum"));
-   var win_prob = get_preflop_win_probability([v1, v2], trials=1000, include_winning_hand_stats=false);
+   var win_prob = get_preflop_win_probability([v1, v2], trials=100000, include_winning_hand_stats=false);
    // debug
    var output = document.getElementById("sliderValue")
-   output.innerHTML = `${100*win_prob}` + "%";
+   output.innerHTML = `${Math.round(10*100*win_prob)/10}` + "%"; // *10 / 10 is a trick to round to 1 decimal
    
    var slider = document.getElementById("mySlider")
-   slider.setAttribute("value", 100*win_prob) 
+   slider.setAttribute("value", `${100*win_prob}`);
+   slider.value = `${100*win_prob}`;
 
   var submit_button = document.getElementById("submit_button");
   submit_button.innerHTML = "Deal"
