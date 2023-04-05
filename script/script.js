@@ -298,13 +298,33 @@ function deal() {
   var submit_button = document.getElementById("submit_button");
   submit_button.innerHTML = "Check"
   submit_button.onclick = check;
-  
 }
 
 // Players button functionality
 for (let n = 2; n <= 10; n++) {
   var players_choice = document.getElementById(`player${n}`);
   players_choice.onclick = setPlayers;
+}
+
+// Mode button functionality
+var preflop_mode = document.getElementById("preflop_mode");
+var flop_mode = document.getElementById("flop_mode");
+var turn_mode = document.getElementById("turn_mode");
+var river_mode = document.getElementById("river_mode");
+var all_mode = document.getElementById("all_mode");
+preflop_mode.onclick = modeSelection;
+flop_mode.onclick = modeSelection;
+turn_mode.onclick = modeSelection;
+river_mode.onclick = modeSelection;
+all_mode.onclick = modeSelection;
+
+function modeSelection(event) {
+  preflop_mode.innerHTML = "Preflop";
+  flop_mode.innerHTML = "Flop";
+  turn_mode.innerHTML = "Turn";
+  river_mode.innerHTML = "River";
+  all_mode.innerHTML = "All";
+  event.target.innerHTML +=  " &#x2714"
 }
 
 
