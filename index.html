@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+    <title>Pokerprob</title>
+</head>
+<link rel="stylesheet" href="css/style.css">
+<body>
+
+  <div class="dropdown">
+    <button class="dropbtn">Players</button>
+    <div class="dropdown-content">
+    <a href="#" id="player2">2</a>
+    <a href="#" id="player3">3</a>
+    <a href="#" id="player4">4</a>
+    <a href="#" id="player5">5</a>
+    <a href="#" id="player6">6</a>
+    <a href="#" id="player7">7</a>
+    <a href="#" id="player8">8</a>
+    <a href="#" id="player9">9</a>
+    <a href="#" id="player10">10</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Mode</button>
+    <div class="dropdown-content">
+    <a href="#" id="preflop_mode">Preflop &#x2714</a>
+    <a href="#" id="flop_mode">Flop</a>
+    <a href="#" id="turn_mode">Turn</a>
+    <a href="#" id="river_mode">River</a>
+    <a href="#" id="all_mode">All</a>
+    </div>
+  </div>    
+  
+  <img src="css/bird.svg" class="table_print"/> 
+  <div id="table" class="table2">
+    <div class="table_line"></div>
+    <div id="container" class="card_container"></div>
+	</div>
+  
+  
+
+  <div class="slider-container">
+    <a href="#" class="submit" id="submit_button">Deal</a>
+    <div class="slider-value" id="sliderValue"></div>
+    <input type="range" min="0" max="100" value="50" class="slider" id="mySlider">
+  </div>
+  
+  <script type="text/javascript" src="script/jszip.min.js"></script>
+  <script src="script/script.js"></script>
+ 
+
+</body>
+ 
+</html>
