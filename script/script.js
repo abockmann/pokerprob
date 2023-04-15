@@ -6,8 +6,11 @@ var HR;
 // number of players
 var numPlayers = 10;
 
+var game_mode = 'preflop_mode'
+
 // where in the game are we?
-var step = "preflop";
+const game_step_dict = {'preflop': 0, 'flop': 1, 'turn': 2, 'river': 3}
+var game_step = 0;
 
 // cards
 
@@ -227,6 +230,14 @@ function deal() {
   const hole2_value = hand[1];
 
   let card_containers = [];
+  if (game_step > 0) {
+    let community_cards_container = document.createElement("div");
+    community_cards_container.setAttribute("id", "community_cards_container");
+    community_cards_container.setAttribute("class", "community_cards_container");
+    table.appendChild(community_cards_container);
+    cc1 = new Card(34, card_id="hole1", parent_id="community_cards_container", face="up")
+    cc2 = new Card(18, card_id="hole1", parent_id="community_cards_container", face="up")
+  }
   for (let i = 0; i <  numPlayers; i++) {
     card_containers.push(document.createElement("div"));
     card_containers[i].setAttribute("id", `player_${i}`);
@@ -273,6 +284,8 @@ function modeSelection(event) {
   river_mode.innerHTML = "River";
   all_mode.innerHTML = "All";
   event.target.innerHTML +=  " &#x2714"
+  game_mode = event.target.id;
+  game_step = game_step_dict[{'preflop_mode': 'preflop', 'flop_mode': 'flop', 'turn_mode': 'turn', 'river_mode': 'river', 'all_mode': 'preflop'}[game_mode]];
 }
 
 
@@ -299,10 +312,6 @@ function check() {
 }
 
 
-deal()
-
-
-
 // Unpack table.dat
 async function fetchTable() {
   const tableZipUrl = 'script/HandRanks.zip';
@@ -311,6 +320,9 @@ async function fetchTable() {
   const tableData = await jsZip.file('HandRanks.dat').async('arrayBuffer');
   return new Uint32Array(tableData)
 }
+
+
+deal()
 
 
 fetchTable().then(table => {
