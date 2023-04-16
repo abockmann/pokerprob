@@ -2,72 +2,23 @@
 
 // hand rank table
 var HR;
+
+// number of players
 var numPlayers = 10;
+
+var game_mode = 'preflop_mode'
+
+// where in the game are we?
+const game_step_dict = {'preflop': 0, 'flop': 1, 'turn': 2, 'river': 3}
+var game_step = 0;
 
 // cards
 
-const CARDS = {
-    "2c": 1,
-    "2d": 2,
-    "2h": 3,
-    "2s": 4,
-    "3c": 5,
-    "3d": 6,
-    "3h": 7,
-    "3s": 8,
-    "4c": 9,
-    "4d": 10,
-    "4h": 11,
-    "4s": 12,
-    "5c": 13,
-    "5d": 14,
-    "5h": 15,
-    "5s": 16,
-    "6c": 17,
-    "6d": 18,
-    "6h": 19,
-    "6s": 20,
-    "7c": 21,
-    "7d": 22,
-    "7h": 23,
-    "7s": 24,
-    "8c": 25,
-    "8d": 26,
-    "8h": 27,
-    "8s": 28,
-    "9c": 29,
-    "9d": 30,
-    "9h": 31,
-    "9s": 32,
-    "tc": 33,
-    "td": 34,
-    "th": 35,
-    "ts": 36,
-    "jc": 37,
-    "jd": 38,
-    "jh": 39,
-    "js": 40,
-    "qc": 41,
-    "qd": 42,
-    "qh": 43,
-    "qs": 44,
-    "kc": 45,
-    "kd": 46,
-    "kh": 47,
-    "ks": 48,
-    "ac": 49,
-    "ad": 50,
-    "ah": 51,
-    "as": 52
-  }
-  
-const flip = (data) => Object.fromEntries(
-  Object
-    .entries(data)
-    .map(([key, value]) => [value, key])
-  );  
+const CARDS = {1: '2c', 2: '2d', 3: '2h', 4: '2s', 5: '3c', 6: '3d', 7: '3h', 8: '3s', 9: '4c', 10: '4d', 11: '4h', 12: '4s', 13: '5c',
+               14: '5d', 15: '5h', 16: '5s', 17: '6c', 18: '6d', 19: '6h', 20: '6s', 21: '7c', 22: '7d', 23: '7h', 24: '7s', 25: '8c', 26: '8d',
+               27: '8h', 28: '8s', 29: '9c', 30: '9d', 31: '9h', 32: '9s', 33: 'tc', 34: 'td', 35: 'th', 36: 'ts', 37: 'jc', 38: 'jd', 39: 'jh',
+               40: 'js', 41: 'qc', 42: 'qd', 43: 'qh', 44: 'qs', 45: 'kc', 46: 'kd', 47: 'kh', 48: 'ks', 49: 'ac', 50: 'ad', 51: 'ah', 52: 'as'};
 
-CARDS_INV = flip(CARDS);
 
 const suit_dict = {'s': '\u2660', 'd': '\u2666', 'c': '\u2663', 'h': '\u2665'}
 const color_dict = {'s': 'black', 'd': 'blue', 'c': 'green', 'h': 'red'}
@@ -76,8 +27,8 @@ class Card {
   constructor(cardNum, card_id, parent_id, face="up") {
     
     this.cardNum = cardNum
-    this.suit =  CARDS_INV[this.cardNum][1]
-    this.value = CARDS_INV[this.cardNum][0].toUpperCase().replace("T", "10")
+    this.suit =  CARDS[this.cardNum][1]
+    this.value = CARDS[this.cardNum][0].toUpperCase().replace("T", "10")
     this.card_id = card_id;
     this.parent_id = parent_id;
     this.face = face;
@@ -279,6 +230,14 @@ function deal() {
   const hole2_value = hand[1];
 
   let card_containers = [];
+  if (game_step > 0) {
+    let community_cards_container = document.createElement("div");
+    community_cards_container.setAttribute("id", "community_cards_container");
+    community_cards_container.setAttribute("class", "community_cards_container");
+    table.appendChild(community_cards_container);
+    cc1 = new Card(34, card_id="hole1", parent_id="community_cards_container", face="up")
+    cc2 = new Card(18, card_id="hole1", parent_id="community_cards_container", face="up")
+  }
   for (let i = 0; i <  numPlayers; i++) {
     card_containers.push(document.createElement("div"));
     card_containers[i].setAttribute("id", `player_${i}`);
@@ -325,6 +284,8 @@ function modeSelection(event) {
   river_mode.innerHTML = "River";
   all_mode.innerHTML = "All";
   event.target.innerHTML +=  " &#x2714"
+  game_mode = event.target.id;
+  game_step = game_step_dict[{'preflop_mode': 'preflop', 'flop_mode': 'flop', 'turn_mode': 'turn', 'river_mode': 'river', 'all_mode': 'preflop'}[game_mode]];
 }
 
 
@@ -351,10 +312,6 @@ function check() {
 }
 
 
-deal()
-
-
-
 // Unpack table.dat
 async function fetchTable() {
   const tableZipUrl = 'script/HandRanks.zip';
@@ -363,6 +320,9 @@ async function fetchTable() {
   const tableData = await jsZip.file('HandRanks.dat').async('arrayBuffer');
   return new Uint32Array(tableData)
 }
+
+
+deal()
 
 
 fetchTable().then(table => {
